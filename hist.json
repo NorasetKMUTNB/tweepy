@@ -1,0 +1,22 @@
+{
+    "da7624118afaef67058ee460f0c0818e": {
+        "dimension": [
+            "keyword",
+            "language",
+            "author",
+            "twitter_name",
+            "create_at",
+            "location",
+            "text",
+            "hashtag",
+            "date_year",
+            "time",
+            "sentiment"
+        ],
+        "measure": [
+            "tweets_count",
+            "retweet_count",
+            "favourite_count"
+        ]
+    }
+}
