@@ -18,5 +18,85 @@
             "retweet_count",
             "favourite_count"
         ]
+    },
+    "4ef53983ddf039063a8c39ebcd72141e": {
+        "dimension": [
+            "keyword",
+            "language",
+            "author",
+            "twitter_name",
+            "create_at",
+            "location",
+            "text",
+            "hashtag",
+            "date_year",
+            "time",
+            "sentiment"
+        ],
+        "measure": [
+            "tweets_count",
+            "retweet_count",
+            "favourite_count"
+        ]
+    },
+    "97c1ac03503757c23422e55622063fd3": {
+        "dimension": [
+            "keyword",
+            "language",
+            "author",
+            "twitter_name",
+            "create_at",
+            "location",
+            "text",
+            "hashtag",
+            "date_year",
+            "time",
+            "sentiment"
+        ],
+        "measure": [
+            "tweets_count",
+            "retweet_count",
+            "favourite_count"
+        ]
+    },
+    "1e8b04820e4bd292e027bc1722c9b2db": {
+        "dimension": [
+            "keyword",
+            "language",
+            "author",
+            "twitter_name",
+            "create_at",
+            "location",
+            "text",
+            "hashtag",
+            "date_year",
+            "time",
+            "sentiment"
+        ],
+        "measure": [
+            "tweets_count",
+            "retweet_count",
+            "favourite_count"
+        ]
+    },
+    "97c07b679e9d9e8d9637ab2ddba449ff": {
+        "dimension": [
+            "keyword",
+            "language",
+            "author",
+            "twitter_name",
+            "create_at",
+            "location",
+            "text",
+            "hashtag",
+            "date_year",
+            "time",
+            "sentiment"
+        ],
+        "measure": [
+            "tweets_count",
+            "retweet_count",
+            "favourite_count"
+        ]
     }
 }

@@ -19,6 +19,23 @@ import langdetect
 class Counting:
     def __init__(self):
         pass
+
+    def remove_url_th(self,txt):
+        """Replace URLs found in a text string with nothing 
+        (i.e. it will remove the URL from the string).
+
+        Parameters
+        ----------
+        txt : string
+            A text string that you want to parse and remove urls.
+
+        Returns
+        -------
+        The same txt string with url's removed.
+        """
+
+        return " ".join(re.sub("([^\u0E00-\u0E7Fa-zA-Z' ]|^'|'$|''|(\w+:\/\/\S+))", "", txt).split())
+
     
     ################################################################
     # Bow
@@ -46,7 +63,6 @@ class Counting:
 
         keyword_df = keyword_df.sort_values(by=['count_word'], ascending=False)
         keyword_df.to_csv('backup//{}//{}_count_word.csv'.format(key, key), index=False, encoding='utf-8')
-        print('{} word finished'.format(key))
 
     def language(self, data):
         temp_language = pd.Series([],dtype=pd.StringDtype())
@@ -96,7 +112,7 @@ class Counting:
 
         hash_tag_cnt_df = hash_tag_cnt_df.sort_values(by=['count'], ascending=False)
 
-        hash_tag_cnt_df.to_csv('backup//{}//{}_counting_hashtag.csv'.format(key, key), index=False, encoding='utf-8')
+        hash_tag_cnt_df.to_csv('backup//{}//{}_count_hashtag.csv'.format(key, key), index=False, encoding='utf-8')
     
     def slash_tokenize(self, d):  
         result = d.split("/")

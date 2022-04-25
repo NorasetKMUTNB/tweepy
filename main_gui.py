@@ -2,7 +2,8 @@
 ## CONVERT .UI & .QRC
 # pyrcc5 resources.qrc -o resource_rc.py
 # pyuic5 -x ui_interface.ui -o tweety_interface.py 
-# pyuic5 -x dialog_newkey.ui -o new_key_interface.py 
+# pyuic5 -x dialog_date.ui -o date_interface.py 
+# pyuic5 -x popup_progress.ui -o popup_progress.py 
 ########################################################################
 
 ########################################################################
@@ -13,8 +14,15 @@ import os
 import sys
 import re
 
+import shutil
+import threading
+
 import pandas as pd
+from time import sleep
+
 from dialog_gui import *
+from TwitterManager import *
+
 ########################################################################
 # IMPORT GUI FILE
 from tweety_interface import *
@@ -32,20 +40,24 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.list_keyword = []
         self.key = ''
+        self.twm = twitter_manager()
+
+        self.pbar = PopupProgress('')
 
         self.getListKeyword()
-
         self.date_now = QDate.currentDate()
         # print(QDate.fromString(self.date_now.toString(Qt.ISODate), Qt.ISODate))
 
         #######################################################################
         # ADD FUNCTION ELEMENT
         #######################################################################
+        self.ui.date_label.setText("TODAY : "+ self.date_now.toString(Qt.ISODate) + ' UTC+00:00')
         self.ui.Search_LineEdit.returnPressed.connect(self.search)
-        self.ui.date_label.setText("TODAY : "+ self.date_now.toString(Qt.ISODate) + ' UTC')
-        self.ui.SearchList.installEventFilter(self)
-        self.ui.SearchList.itemDoubleClicked.connect(self._handleDoubleClick)
-        self.ui.base_date_combobox.currentTextChanged.connect(self.date_changed)
+        self.ui.SearchList.itemDoubleClicked.connect(self._handleDoubleClick)   # double-click
+        self.ui.SearchList.installEventFilter(self) # right-click
+
+        self.ui.seldate_btn.clicked.connect(self.selection_date)
+        self.ui.base_date_comboBox.currentTextChanged.connect(self.date_changed)
         self.ui.reload_btn.clicked.connect(self.getListKeyword)
         #######################################################################
         # SHOW WINDOW
@@ -56,85 +68,23 @@ class MainWindow(QMainWindow):
     ########################################################################
     ## FUNCTION
     ########################################################################
-    
     def getListKeyword(self):
-        """" Collect keywords have been searched 
-        """
+        """" Collect keywords have been searched """
         self.ui.SearchList.clear()
         folder = './/backup'
         self.list_keyword = [name for name in os.listdir(folder) if os.path.isdir(os.path.join(folder, name))]
         self.ui.SearchList.addItems(self.list_keyword)
-        
 
-    def loaddata(self, key):
-        """ This method will make all table """
-        # base_table
-        self.ui.base_label.setText("{}".format(key))
-        self.df_base = pd.read_csv('.//backup//{}//{}.csv'.format(key, key))
 
-        len_row_base = len(self.df_base.index)
-        len_col_base = len(self.df_base.columns)
-
-        self.ui.base_table.setColumnCount(len_col_base)
-        self.ui.base_table.setRowCount(len_row_base)
-        self.ui.base_table.setHorizontalHeaderLabels(self.df_base.columns)
-
-        for i in range(len_row_base):
-            for j in range(len_col_base):
-                self.ui.base_table.setItem(i ,j, QTableWidgetItem(str(self.df_base.iat[i, j])))
-
-        self.ui.base_table.resizeColumnsToContents()
-        self.ui.status_base_label.setText("{} Tweets".format(len_row_base))
-
-        # word_table
-        self.ui.word_label.setText("{}".format(key))
-        self.df_word = pd.read_csv('.//backup//{}//{}_count_word.csv'.format(key, key))
-
-        len_row_word = len(self.df_word.index)
-        len_col_word = len(self.df_word.columns)
-
-        self.ui.word_table.setColumnCount(len_col_word)
-        self.ui.word_table.setRowCount(len_row_word)
-        self.ui.word_table.setHorizontalHeaderLabels(self.df_word.columns)
-
-        for i in range(len_row_word):
-            for j in range(len_col_word):
-                self.ui.word_table.setItem(i ,j, QTableWidgetItem(str(self.df_word.iat[i, j])))
-
-        self.ui.word_table.resizeColumnsToContents()
-        self.ui.status_word_label.setText("{} Words".format(len_row_word))
-        
-        # hashtag_table
-        self.ui.hashtag_label.setText("{}".format(key))
-        self.df_hashtag = pd.read_csv('.//backup//{}//{}_count_hashtag.csv'.format(key, key))
-
-        len_row_hashtag = len(self.df_hashtag.index)
-        len_col_hashtag = len(self.df_hashtag.columns)
-
-        self.ui.hashtag_table.setColumnCount(len_col_hashtag)
-        self.ui.hashtag_table.setRowCount(len_row_hashtag)
-        self.ui.hashtag_table.setHorizontalHeaderLabels(self.df_hashtag.columns)
-
-        for i in range(len_row_hashtag):
-            for j in range(len_col_hashtag):
-                self.ui.hashtag_table.setItem(i ,j, QTableWidgetItem(str(self.df_hashtag.iat[i, j])))
-
-        self.ui.hashtag_table.resizeColumnsToContents()
-        self.ui.status_hashtag_label.setText("{} Hashtags".format(len_row_hashtag))
-        
-
-    def _handleDoubleClick(self, item):
-        """ Selection item in Listwidget show dataframe 
-        (i.e. it select keyword will show dataframe in table).
-        """
-
+    def loaddate(self, key):
+        self.ui.base_date_comboBox.currentTextChanged.disconnect(self.date_changed)
         self.ui.Search_LineEdit.clear()
-        self.ui.base_date_combobox.clear()
-        list_date = ['All']
-        self.key = item.text()
-        # item.setSelected(False)
+        self.ui.base_date_comboBox.clear()
+        self.list_date = ['All']
+        self.dict_date = {}
+        self.key = key
+
         self.ui.Search_LineEdit.setText("{}".format(self.key))
-        self.loaddata(self.key)
 
         path = ".//backup//{}//file_date".format(self.key)
         for date in os.listdir(path):
@@ -142,11 +92,34 @@ class MainWindow(QMainWindow):
                 # Prints only text file present in My Folder
                 date = date.replace('.csv', '')
                 # print(x)
-                list_date.append(date.split("_")[1])
+                self.list_date.append(date.split("_")[1])
+                self.dict_date[date.split("_")[1]] = True
 
-        self.ui.base_date_combobox.addItems(list_date)
+        self.ui.base_date_comboBox.addItems(self.list_date)
+        self.ui.base_date_comboBox.currentTextChanged.connect(self.date_changed)
 
-    # right-cilck item in listwidget
+
+    def loaddata(self):
+        """ This method will make all table """
+        self.pbar.set_key_progress(self.key)
+        self.pbar.show()
+
+        self.workerCSV = WorkerCSV(self)
+        self.workerCSV.start()
+        self.workerCSV.finished.connect(self.finish_worker_csv)
+        self.workerCSV.update_progress.connect(self.update_worker)
+
+
+    def _handleDoubleClick(self, item): # double-click
+        """ Selection item in Listwidget show dataframe 
+        (i.e. it select keyword will show dataframe in table). 
+        """
+        self.key = item.text()
+        self.loaddata()
+        self.loaddate(self.key)
+
+
+    # right-click item in listwidget
     def eventFilter(self, source, event):
         if event.type() == QEvent.ContextMenu and source is self.ui.SearchList:
             menu = QMenu()
@@ -157,26 +130,32 @@ class MainWindow(QMainWindow):
             action = menu.exec_(event.globalPos())
             item = source.itemAt(event.pos())
 
-            if action == upact:
-                print("update ", item.text())
-                updia = UpdateDialog(item.text())   
-                if updia.exec():
-                    print("Success!")
-                    begin_date = updia.begin_date.toString(Qt.ISODate)
-                    end_date = updia.end_date.toString(Qt.ISODate)
-                    twm.serach_tweet(item.text(), end_date, begin_date)
+            self.key = item.text()
 
-                    self.getListKeyword()
-                else:
-                    print("Cancel!")
+            if action == upact:
+                updia = UpdateDialog(self.key)   
+                if updia.exec():
+                    self.begin_date = updia.begin_date.toString(Qt.ISODate)
+                    self.end_date = updia.end_date.toString(Qt.ISODate)
+
+                    self.pbar = PopupProgress(self.key)
+                    self.pbar.show()
+
+                    self.workerTW = WorkerTweet(self)
+                    self.workerTW.start()
+                    self.workerTW.finished.connect(self.finish_worker_tweet)
+                    self.workerTW.update_progress.connect(self.update_worker)
 
             elif action == delact:
-                print("delete ", item.text())
-                dlg = DialogDelete(item.text())
+                dlg = DialogDelete(self.key)
                 if dlg.exec():
-                    print("Success!")
-                else:
-                    print("Cancel!")
+                    dir_path = './backup/{}'.format(self.key)
+                    try:
+                        shutil.rmtree(dir_path)
+                        self.getListKeyword()
+
+                    except OSError as e:
+                        print("Error: %s : %s" % (dir_path, e.strerror))
 
             return True
         return super().eventFilter(source, event)
@@ -185,72 +164,68 @@ class MainWindow(QMainWindow):
     def search(self):
         # getting text from the line edit
         self.key = self.ui.Search_LineEdit.text().lower()
-        # print(self.key)
 
-        # check keyword in listwidget
+        # check keyword is in listwidget
         if self.key in self.list_keyword: 
-            # print(self.key)
-            self.loaddata(self.key)
+            self.loaddata()
+            self.loaddate(self.key)
         else : 
-            # print("% s it's new word" %self.key)
             dlg = DialogNewKey(self.key)
             if dlg.exec():
-                print("Success!")
                 updia = UpdateDialog(self.key)
                 if updia.exec():
-                    twm.create_directory(self.key)
-                    begin_date = updia.begin_date.toString(Qt.ISODate)
-                    end_date = updia.end_date.toString(Qt.ISODate)
-                    twm.serach_tweet(self.key, end_date, begin_date)
+                    self.twm.create_directory(self.key)
 
-                    self.getListKeyword()
-                else:
-                    pass
-            else:
-                print("Cancel!")
+                    self.begin_date = updia.begin_date.toString(Qt.ISODate)
+                    self.end_date = updia.end_date.toString(Qt.ISODate)
+
+                    self.pbar.set_key_progress(self.key)
+                    self.pbar.show()
+
+                    self.workerTW = WorkerTweet(self)
+                    self.workerTW.start()
+                    self.workerTW.finished.connect(self.finish_worker_tweet)
+                    self.workerTW.update_progress.connect(self.update_worker)
+
+
+    def selection_date(self):
+        self.key = self.ui.base_label.text().lower()
+        datedia = DateDialog(self.key, self)
+        datedia.show()
 
 
     def date_changed(self, value):
-        self.key = self.ui.Search_LineEdit.text().lower()
+        self.pbar.set_key_progress(self.key)
+        self.pbar.show()
+        self.DateSelection = value
 
-        if value == 'All':
-            key = self.ui.base_label.text()
-            self.df_base = pd.read_csv('.//backup//{}//{}.csv'.format(key, key))
+        self.workerCD = WorkerChangeDate(self)
+        self.workerCD.start()
+        self.workerCD.finished.connect(self.finish_worker_change_date)
+        self.workerCD.update_progress.connect(self.update_worker)
 
-            len_row_base = len(self.df_base.index)
-            len_col_base = len(self.df_base.columns)
 
-            self.ui.base_table.setColumnCount(len_col_base)
-            self.ui.base_table.setRowCount(len_row_base)
-            self.ui.base_table.setHorizontalHeaderLabels(self.df_base.columns)
+    def finish_worker_tweet(self):
+        self.workerTW.stop()
+        self.pbar.close()
+        self.getListKeyword()
+        self.loaddata()
 
-            for i in range(len_row_base):
-                for j in range(len_col_base):
-                    self.ui.base_table.setItem(i ,j, QTableWidgetItem(str(self.df_base.iat[i, j])))
+    def finish_worker_csv(self):
+        self.workerCSV.stop()
+        self.pbar.close()
+        self.loaddate(self.key)
 
-            self.ui.base_table.resizeColumnsToContents()
-            self.ui.status_base_label.setText("{} Tweets".format(len_row_base))
+    def finish_worker_change_date(self):
+        self.workerCD.stop()
+        self.pbar.close()
 
-        elif value != '':
-            key = self.ui.base_label.text()
-            self.df_base = pd.read_csv('.//backup//{}//file_date//{}_{}_twitterCrawler.csv'.format(key, key, value))
+    def update_worker(self, val):
+        self.pbar.ui.progressBar.setValue(val)
 
-            len_row_base = len(self.df_base.index)
-            len_col_base = len(self.df_base.columns)
 
-            self.ui.base_table.setColumnCount(len_col_base)
-            self.ui.base_table.setRowCount(len_row_base)
-            self.ui.base_table.setHorizontalHeaderLabels(self.df_base.columns)
-
-            for i in range(len_row_base):
-                for j in range(len_col_base):
-                    self.ui.base_table.setItem(i ,j, QTableWidgetItem(str(self.df_base.iat[i, j])))
-
-            self.ui.base_table.resizeColumnsToContents()
-            self.ui.status_base_label.setText("{} Tweets".format(len_row_base))
-
-        
     ########################################################################
+
 
 ########################################################################
 ## EXECUTE APP
@@ -263,3 +238,4 @@ if __name__ == "__main__":
 ########################################################################
 ## END===>
 ########################################################################
+    
