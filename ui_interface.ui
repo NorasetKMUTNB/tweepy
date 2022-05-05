@@ -7,15 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>978</width>
-    <height>602</height>
+    <height>601</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Tweety</string>
+   <string>Lotdak Tweety</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/icons/images/icons8-bookmark-384.png</normaloff>:/icons/images/icons8-bookmark-384.png</iconset>
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/images/icons8-document-384.png</normaloff>:/icons/images/icons8-document-384.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
@@ -34,8 +34,40 @@
        </size>
       </property>
       <property name="text">
-       <string>Selection Date</string>
+       <string>Selection Range Date</string>
       </property>
+      <property name="icon">
+       <iconset resource="resources.qrc">
+        <normaloff>:/icons/images/icons8-calendar-96.png</normaloff>:/icons/images/icons8-calendar-96.png</iconset>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" rowspan="3">
+     <widget class="QLabel" name="base_label">
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Helvetica&quot;;</string>
+      </property>
+      <property name="text">
+       <string>Keyword</string>
+      </property>
+      <property name="margin">
+       <number>10</number>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="base_date_comboBox">
+      <property name="minimumSize">
+       <size>
+        <width>319</width>
+        <height>22</height>
+       </size>
+      </property>
+      <item>
+       <property name="text">
+        <string>All </string>
+       </property>
+      </item>
      </widget>
     </item>
     <item row="3" column="0" colspan="2">
@@ -48,17 +80,79 @@
         <string>Base</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="4" column="1" alignment="Qt::AlignRight">
+        <item row="4" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="positive_label">
+            <property name="text">
+             <string>Positive : 0%</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="negative_label">
+            <property name="text">
+             <string>Negative : 0%</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="neutal_label">
+            <property name="text">
+             <string>Neutral : 0%</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="0" colspan="4">
+         <widget class="QTableWidget" name="base_table">
+          <property name="acceptDrops">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3" alignment="Qt::AlignRight">
          <widget class="QLabel" name="status_base_label">
           <property name="text">
            <string>0 Tweets</string>
           </property>
+          <property name="margin">
+           <number>5</number>
+          </property>
          </widget>
         </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QTableWidget" name="base_table">
-          <property name="acceptDrops">
-           <bool>true</bool>
+        <item row="4" column="0">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="4" column="2">
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
          </widget>
         </item>
@@ -73,6 +167,9 @@
          <widget class="QLabel" name="status_word_label">
           <property name="text">
            <string>0 Words</string>
+          </property>
+          <property name="margin">
+           <number>5</number>
           </property>
          </widget>
         </item>
@@ -91,6 +188,9 @@
           <property name="text">
            <string>0 Hashtags</string>
           </property>
+          <property name="margin">
+           <number>5</number>
+          </property>
          </widget>
         </item>
         <item row="0" column="0" colspan="2">
@@ -98,34 +198,6 @@
         </item>
        </layout>
       </widget>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QComboBox" name="base_date_comboBox">
-      <property name="minimumSize">
-       <size>
-        <width>319</width>
-        <height>22</height>
-       </size>
-      </property>
-      <item>
-       <property name="text">
-        <string>All </string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="0" column="0" rowspan="3">
-     <widget class="QLabel" name="base_label">
-      <property name="styleSheet">
-       <string notr="true">font: 11pt &quot;Helvetica&quot;;</string>
-      </property>
-      <property name="text">
-       <string>Keyword</string>
-      </property>
-      <property name="margin">
-       <number>10</number>
-      </property>
      </widget>
     </item>
    </layout>
@@ -139,28 +211,21 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="3">
-      <widget class="QLabel" name="date_label">
-       <property name="text">
-        <string>TODAY : </string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_10">
-       <property name="text">
-        <string>Search</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" colspan="4">
+     <item row="3" column="0" colspan="3">
       <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="4">
+     <item row="0" column="2">
+      <widget class="QLabel" name="date_label">
+       <property name="text">
+        <string>TODAY : </string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="3">
       <widget class="QListWidget" name="SearchList">
        <property name="acceptDrops">
         <bool>false</bool>
@@ -176,47 +241,51 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1" colspan="3">
+     <item row="1" column="1" colspan="2">
       <widget class="QLineEdit" name="Search_LineEdit"/>
      </item>
-     <item row="5" column="0" colspan="4">
-      <widget class="QPushButton" name="reload_btn">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_10">
        <property name="text">
-        <string>Relaod</string>
+        <string>Search</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="3">
+      <widget class="QPushButton" name="all_ex_btn">
+       <property name="text">
+        <string>Export All File</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/icons/images/icons8-save-96.png</normaloff>:/icons/images/icons8-save-96.png</iconset>
        </property>
       </widget>
      </item>
     </layout>
    </widget>
   </widget>
-  <action name="menuExit">
+  <action name="actionupdate">
    <property name="icon">
-    <iconset>
-     <normaloff>:/icons/images/icons8-emergency-exit-96.png</normaloff>:/icons/images/icons8-emergency-exit-96.png</iconset>
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/images/icons8-downloading-updates-96.png</normaloff>:/icons/images/icons8-downloading-updates-96.png</iconset>
    </property>
    <property name="text">
-    <string>Exit</string>
+    <string>update</string>
    </property>
   </action>
-  <action name="menuImport">
+  <action name="actiondelete">
    <property name="icon">
-    <iconset>
-     <normaloff>:/icons/images/icons8-document-384.png</normaloff>:/icons/images/icons8-document-384.png</iconset>
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/images/icons8-delete-96.png</normaloff>:/icons/images/icons8-delete-96.png</iconset>
    </property>
    <property name="text">
-    <string>Import</string>
-   </property>
-  </action>
-  <action name="actionUnion">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/icons/images/icons8-group-layouts-96.png</normaloff>:/icons/images/icons8-group-layouts-96.png</iconset>
-   </property>
-   <property name="text">
-    <string>Union</string>
+    <string>delete</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

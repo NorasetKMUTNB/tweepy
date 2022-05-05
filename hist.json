@@ -98,5 +98,109 @@
             "retweet_count",
             "favourite_count"
         ]
+    },
+    "6bff814755ed98e4d7f42068e8b31d36": {
+        "dimension": [
+            "keyword",
+            "language",
+            "word",
+            "date_year"
+        ],
+        "measure": [
+            "count_word"
+        ]
+    },
+    "830a8a935eec5de02116654451b75dd5": {
+        "dimension": [
+            "keyword",
+            "language",
+            "author",
+            "twitter_name",
+            "create_at",
+            "location",
+            "text",
+            "date_year",
+            "time",
+            "sentiment"
+        ],
+        "measure": [
+            "hashtag",
+            "tweets_count",
+            "retweet_count",
+            "favourite_count"
+        ]
+    },
+    "34e58c30e7901241b4e4fd0919868577": {
+        "dimension": [
+            "keyword",
+            "language",
+            "word",
+            "date_year"
+        ],
+        "measure": [
+            "count_word"
+        ]
+    },
+    "79bbfa4dda21401edecf820da3e940d5": {
+        "dimension": [
+            "keyword",
+            "language",
+            "word",
+            "date_year"
+        ],
+        "measure": [
+            "count_word"
+        ]
+    },
+    "0a99a474cc89adf02d02421bcbf93e2e": {
+        "dimension": [
+            "keyword",
+            "language",
+            "author",
+            "twitter_name",
+            "create_at",
+            "location",
+            "text",
+            "hashtag",
+            "date_year",
+            "time",
+            "sentiment"
+        ],
+        "measure": [
+            "tweets_count",
+            "retweet_count",
+            "favourite_count"
+        ]
+    },
+    "08ae1723ac498b7b44530076d17bac92": {
+        "dimension": [
+            "keyword",
+            "language",
+            "author",
+            "twitter_name",
+            "create_at",
+            "location",
+            "text",
+            "hashtag",
+            "date_year",
+            "time",
+            "sentiment"
+        ],
+        "measure": [
+            "tweets_count",
+            "retweet_count",
+            "favourite_count"
+        ]
+    },
+    "44530ba387852e604a5be094a2c14e9f": {
+        "dimension": [
+            "keyword",
+            "language",
+            "word",
+            "date_year"
+        ],
+        "measure": [
+            "count_word"
+        ]
     }
 }
